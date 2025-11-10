@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+# LABELO / VSW - Script para ensaios funcionais de Segurança Cibernética em TV-Box, seguindo o ATO 9281 da ANATEL.
 
 set -e
 
