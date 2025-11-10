@@ -80,7 +80,6 @@ Digite o orçamento da amostra: 7890
   - *5.2.2.4*: Verificação de instalação de apps de terceiros.
   - *5.2.2.5*: Listagem de portas abertas para comparação com documentação.
   - *5.2.3*: Registro de resultados no relatório.
-  - *5.2.4*: Nota sobre ensaios adicionais (compatibilidade eletromagnética, etc.).
 
 
 ## Estrutura dos Arquivos
