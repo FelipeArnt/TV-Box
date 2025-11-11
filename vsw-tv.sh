@@ -4,17 +4,13 @@
 
 set -euo pipefail
 
-##############
 # Configurações
-##############
 VERSION="1.0.0"
 OUTPUT_DIR="coleta_tvbox"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 LOGFILE="${OUTPUT_DIR}/${TIMESTAMP}_exec.log"
 
-##############
 # Auxiliares
-##############
 die(){ echo "[ERRO] $*" | tee -a "$LOGFILE"; exit 1; }
 log(){ echo "[INFO] $*" | tee -a "$LOGFILE"; }
 
@@ -28,9 +24,7 @@ EOF
   exit 0
 }
 
-##############
 # Validações
-##############
 while getopts "hc" opt; do
   case $opt in
     h) usage ;;
@@ -43,9 +37,7 @@ command -v adb >/dev/null 2>&1 || die "ADB não encontrado. Instale o Android SD
 
 mkdir -p "$OUTPUT_DIR" || die "Não consegui criar ${OUTPUT_DIR}"
 
-##############
 # Entradas
-##############
 read -rp "Digite o protocolo da amostra: " PROTOCOLO
 [[ -z "$PROTOCOLO" ]] && die "Protocolo não pode ser vazio."
 read -rp "Digite o orçamento da amostra: " ORCAMENTO
@@ -53,17 +45,14 @@ read -rp "Digite o orçamento da amostra: " ORCAMENTO
 
 PREFIX="${TIMESTAMP}_${PROTOCOLO// /_}"
 
-##############
+
 # Dispositivo
-##############
 log "Verificando dispositivo ADB..."
 adb wait-for-device || die "Nenhum dispositivo detectado. Verifique o cabo/USB-debug."
 SERIAL=$(adb get-serialno)
 log "Dispositivo detectado: ${SERIAL}"
 
-##############
 # Coleta
-##############
 log "Iniciando coleta..."
 
 # 1) Pacotes
@@ -91,14 +80,13 @@ cat <<EOF > "${OUTPUT_DIR}/${PREFIX}_resumo.json"
   "orcamento": "$ORCAMENTO",
   "serial": "$SERIAL",
   "timestamp": "$TIMESTAMP",
-  "android_version": "$(adb shell getprop ro.build.version.release)",
+  "android_versao": "$(adb shell getprop ro.build.version.release)",
   "modelo": "$(adb shell getprop ro.product.model)"
 }
 EOF
 
-##############
+-------------
 # Finalização
-##############
 log "Coleta finalizada em ${OUTPUT_DIR}"
 log "Arquivos salvos com prefixo: ${PREFIX}"
 exit 0
