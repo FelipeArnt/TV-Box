@@ -73,15 +73,6 @@ Digite o orçamento da amostra: 7890
   - Informações de rede (Netstat, conectividade, Wi-Fi, telefone).
   - Estado do dispositivo (dumpsys de pacotes e rede).
 
-- **Verificações do ATO 9281 (Seção 5.2)**:
-  - *5.2.1*: Confirmação de configuração de mercado.
-  - *5.2.2.1-5.2.2.2*: Listagem de apps para verificação de irregulares e acesso ilícito (análise manual necessária).
-  - *5.2.2.3*: Detecção de modo root.
-  - *5.2.2.4*: Verificação de instalação de apps de terceiros.
-  - *5.2.2.5*: Listagem de portas abertas para comparação com documentação.
-  - *5.2.3*: Registro de resultados no relatório.
-
-
 ## Estrutura dos Arquivos
 
 - `tvbox_script.sh`: Script principal.
