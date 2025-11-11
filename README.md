@@ -18,7 +18,7 @@ O script gera dois arquivos principais:
 - **Sistema Operacional**: Linux, macOS ou Windows (com WSL ou Git Bash).
 - **ADB (Android Debug Bridge)**: Instalado e configurado. Baixe do [site oficial do Android](https://developer.android.com/studio/command-line/adb).
 - **Dispositivo TV-Box**: Conectado via USB, com depuração USB habilitada e autorizada no dispositivo.
-- **Permissões**: Execute o script com privilégios adequados (ex.: `chmod +x tvbox_script.sh`). O dispositivo deve estar na configuração de mercado, conforme exigido pelo ATO 9281 (5.2.1).
+- **Permissões**: Execute o script com privilégios adequados (ex.: `chmod +x vsw-tv.sh`). O dispositivo deve estar na configuração de mercado, conforme exigido pelo ATO 9281 (5.2.1).
 
 ## Instalação
 
@@ -26,7 +26,7 @@ O script gera dois arquivos principais:
 2. Torne o script executável:
 
    ```bash
-   chmod +x tvbox_script.sh
+   chmod +x vsw-tv.sh
    ```
 
 3. Certifique-se de que o ADB está no PATH do sistema. Teste com:
@@ -41,7 +41,7 @@ O script gera dois arquivos principais:
 2. Execute o script:
 
    ```bash
-   ./tvbox_script.sh
+   ./vsw-tv.sh
    ```
 
 3. Insira o protocolo e orçamento da amostra quando solicitado.
@@ -51,7 +51,7 @@ O script gera dois arquivos principais:
 ### Exemplo de Execução
 
 ```bash
-$ ./tvbox_script.sh
+$ ./vsw-tv.sh
 ==== VSW ====
 ==== TV-BOX ====
 Digite o protocolo da amostra: 12345
@@ -75,7 +75,7 @@ Digite o orçamento da amostra: 7890
 
 ## Estrutura dos Arquivos
 
-- `tvbox_script.sh`: Script principal.
+- `vsw-tv`: Script principal.
 - `relatorio_tvbox.md`: Relatório consolidado com seções do ATO 9281.
 - `aplicativos_tvbox.md`: Tabelas detalhadas de aplicativos.
 
