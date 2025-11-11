@@ -1,79 +1,104 @@
-#!/usr/bin/env sh
-# LABELO / VSW – TV-BOX / ATO 9281 (ANATEL)
-set -e
+#!/usr/bin/env bash
+# vsw-tv-box.sh – Coleta forense rápida de Android-TV via ADB
+# Uso: ./vsw-tv-box.sh [-h] [-c]
 
-echo '==== VSW ===='
-read -p "Protocolo: " protocolo_tvbox
-read -p "Orçamento: " orcamento_tvbox
+set -euo pipefail
 
-RELATORIO="relatorio_tvbox.md"
-APPS_FILE="aplicativos_tvbox.md"
+##############
+# Configurações
+##############
+VERSION="1.0.0"
+OUTPUT_DIR="coleta_tvbox"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+LOGFILE="${OUTPUT_DIR}/${TIMESTAMP}_exec.log"
 
-# ---------- relatório principal ----------
-cat > "$RELATORIO" <<EOF
-# Relatório TV-Box – ATO 9281
-Protocolo: ${protocolo_tvbox}  
-Orçamento: ${orcamento_tvbox}
+##############
+# Auxiliares
+##############
+die(){ echo "[ERRO] $*" | tee -a "$LOGFILE"; exit 1; }
+log(){ echo "[INFO] $*" | tee -a "$LOGFILE"; }
 
-> Consolidado para avaliação de conformidade.  
-> Detalhes de apps em \`$APPS_FILE\`.
+usage(){
+  cat <<EOF
+Uso: $0 [-h] [-c]
 
+  -h  Mostra esta ajuda
+  -c  Limpa coletas anteriores (${OUTPUT_DIR}) antes de rodar
 EOF
+  exit 0
+}
 
-# ---------- aplicativos ----------
-cat > "$APPS_FILE" <<EOF
-# Apps TV-Box – ATO 9281
-Protocolo: ${protocolo_tvbox}  
-Orçamento: ${orcamento_tvbox}
+##############
+# Validações
+##############
+while getopts "hc" opt; do
+  case $opt in
+    h) usage ;;
+    c) rm -rf "$OUTPUT_DIR" ;;
+    *) usage ;;
+  esac
+done
 
-## Apps do Sistema (habilitados)
-\`\`\`
-$(adb shell pm list packages -s -e | sed 's/package://')
-\`\`\`
+command -v adb >/dev/null 2>&1 || die "ADB não encontrado. Instale o Android SDK Platform-Tools."
 
-## Apps de Terceiros
-\`\`\`
-$(adb shell pm list packages -3 | sed 's/package://')
-\`\`\`
-EOF
+mkdir -p "$OUTPUT_DIR" || die "Não consegui criar ${OUTPUT_DIR}"
 
-# ---------- identificação do produto ----------
+##############
+# Entradas
+##############
+read -rp "Digite o protocolo da amostra: " PROTOCOLO
+[[ -z "$PROTOCOLO" ]] && die "Protocolo não pode ser vazio."
+read -rp "Digite o orçamento da amostra: " ORCAMENTO
+[[ -z "$ORCAMENTO" ]] && die "Orçamento não pode ser vazio."
+
+PREFIX="${TIMESTAMP}_${PROTOCOLO// /_}"
+
+##############
+# Dispositivo
+##############
+log "Verificando dispositivo ADB..."
+adb wait-for-device || die "Nenhum dispositivo detectado. Verifique o cabo/USB-debug."
+SERIAL=$(adb get-serialno)
+log "Dispositivo detectado: ${SERIAL}"
+
+##############
+# Coleta
+##############
+log "Iniciando coleta..."
+
+# 1) Pacotes
+adb shell pm list packages -s -e -f > "${OUTPUT_DIR}/${PREFIX}_pkgs_sistema.txt"
+adb shell pm list packages   -3      > "${OUTPUT_DIR}/${PREFIX}_pkgs_terceiros.txt"
+
+# 2) Propriedades
 {
-  echo "## Identificação do Produto"
-  echo "- Modelo: $(adb shell getprop ro.product.model 2>/dev/null | tr -d '\r')"
-  echo "- Android: $(adb shell getprop ro.build.version.release 2>/dev/null | tr -d '\r')"
-  echo "- Build ID: $(adb shell getprop ro.build.display.id 2>/dev/null | tr -d '\r')"
-  echo "- Kernel: $(adb shell uname -r 2>/dev/null | tr -d '\r')"
-  echo
-} >> "$RELATORIO"
+  echo "# Propriedades do sistema"
+  adb shell getprop
+} > "${OUTPUT_DIR}/${PREFIX}_getprop.txt"
 
-# ---------- portas abertas (apenas LISTEN) ----------
+# 3) Dumpsys
+for svc in package cpuinfo meminfo connectivity wifi telephony.registry; do
+  adb shell dumpsys "$svc" > "${OUTPUT_DIR}/${PREFIX}_dumpsys_${svc}.txt"
+done
+
+# 4) Rede
+adb shell netstat -tulpn > "${OUTPUT_DIR}/${PREFIX}_netstat.txt" 2>&1 || true
+
+# 5) Resumo
+cat <<EOF > "${OUTPUT_DIR}/${PREFIX}_resumo.json"
 {
-  echo "## Portas/Serviços (LISTEN)"
-  adb shell netstat -tul 2>/dev/null | grep LISTEN | awk '{print "- " $4}' | sort -u
-  echo
-} >> "$RELATORIO"
-
-# ---------- root ----------
-ROOT_ID=$(adb shell id 2>/dev/null | grep -q 'uid=0' && echo SIM || echo NÃO)
-echo "## Root" >> "$RELATORIO"
-echo "- Modo root detectado: **$ROOT_ID**" >> "$RELATORIO"
-echo >> "$RELATORIO"
-
-# ---------- fontes desconhecidas ----------
-UNK=$(adb shell settings get secure install_non_market_apps 2>/dev/null || echo 0)
-echo "## Instalação de Apps de Terceiros" >> "$RELATORIO"
-echo "- Fontes desconhecidas: **$([ "$UNK" = 1 ] && echo HABILITADA || echo DESABILITADA)**" >> "$RELATORIO"
-echo >> "$RELATORIO"
-
-# ---------- check-list manual ----------
-cat >> "$RELATORIO" <<EOF
-## Itens para Análise Manual (§5.2.2)
-
-1. **5.2.2.1** – Comparar apps da lista com lista de irregulares da Anatel.  
-2. **5.2.2.2** – Identificar apps que possibilitem acesso ilícito a conteúdo audiovisual.  
-3. **5.2.2.5** – Conferir portas/serviços acima com documentação do fabricante (§5.1.5).
-
+  "protocolo": "$PROTOCOLO",
+  "orcamento": "$ORCAMENTO",
+  "serial": "$SERIAL",
+  "timestamp": "$TIMESTAMP",
+  "android_version": "$(adb shell getprop ro.build.version.release)",
+  "modelo": "$(adb shell getprop ro.product.model)"
+}
 EOF
 
-echo "[INFO] Coleta essencial concluída – $RELATORIO | $APPS_FILE"
+##############
+# Finalização
+##############
+log "Coleta finalizada em ${OUTPUT_DIR}"
+log "Arquivos salvos com prefixo: ${PREFIX}"
+exit 0
