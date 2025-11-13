@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# |----|LABELO/VSW|----|@author:Felipe Arnt|----|
+# |----|LABELO/VSW|----|@author:FelipeArnt|----|
 # vsw-tv-box.sh – Script para Ensaios Funcionais em Android-TV via ADB
 # Uso: ./vsw-tv-box.sh [-h] [-c]
 
