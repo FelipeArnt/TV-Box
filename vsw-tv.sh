@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# vsw-tv-box.sh – Coleta forense rápida de Android-TV via ADB
+# |----|LABELO/VSW|----|@author:Felipe Arnt|----|
+# vsw-tv-box.sh – Script para Ensaios Funcionais em Android-TV via ADB
 # Uso: ./vsw-tv-box.sh [-h] [-c]
 
-set -euo pipefail
+set -euo pipefail 
 
 # Configurações
 VERSION="1.0.0"
