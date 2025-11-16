@@ -4,14 +4,7 @@
 
 Este script em shell foi desenvolvido para automatizar a coleta de dados de dispositivos TV-Box baseados em Android, com foco na conformidade com o ATO 9281/2016 da Agência Nacional de Telecomunicações (Anatel). 
 
-Ele executa verificações essenciais para procedimentos de ensaio (seção 5.2), incluindo listagem de softwares, propriedades do sistema, configurações de rede e verificações específicas de segurança cibernética. Os dados são organizados em relatórios Markdown estruturados, facilitando auditorias e submissões à Anatel.
-
-O script gera dois arquivos principais:
-
-- `relatorio_tvbox.md`: Relatório consolidado com propriedades, estado do dispositivo e verificações do ATO 9281.
-- `aplicativos_tvbox.md`: Detalhamento tabular dos aplicativos instalados (sistema e terceiros).
-
-**Nota**: Verificações manuais são necessárias para itens como comparação com listas de irregulares da Anatel e análise de funcionalidades ilícitas.
+Ele executa verificações essenciais para procedimentos de ensaio (seção 5.2), incluindo listagem de softwares, propriedades do sistema, configurações de rede e verificações específicas de segurança cibernética.
 
 ## Pré-requisitos
 
@@ -46,7 +39,6 @@ O script gera dois arquivos principais:
 
 3. Insira o protocolo e orçamento da amostra quando solicitado.
 4. Aguarde a execução (aproximadamente 1-2 minutos, dependendo do dispositivo).
-5. Os arquivos `relatorio_tvbox.md` e `aplicativos_tvbox.md` serão gerados no diretório atual.
 
 ### Exemplo de Execução
 
@@ -72,12 +64,3 @@ Digite o orçamento da amostra: 7890
   - Listagem de aplicativos (sistema e terceiros) em tabelas Markdown.
   - Informações de rede (Netstat, conectividade, Wi-Fi, telefone).
   - Estado do dispositivo (dumpsys de pacotes e rede).
-
-## Estrutura dos Arquivos
-
-- `tvbox_script.sh`: Script principal.
-- `relatorio_tvbox.md`: Relatório consolidado com seções do ATO 9281.
-- `aplicativos_tvbox.md`: Tabelas detalhadas de aplicativos.
-
-
-
