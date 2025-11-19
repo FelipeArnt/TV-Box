@@ -4,7 +4,7 @@
 
 Este script em shell foi desenvolvido para automatizar a coleta de dados de dispositivos TV-Box baseados em Android, com foco na conformidade com o ATO 9281/2016 da Agência Nacional de Telecomunicações (Anatel). 
 
-Ele executa verificações essenciais para procedimentos de ensaio (seção 5.2), incluindo listagem de softwares, propriedades do sistema, configurações de rede e verificações específicas de segurança cibernética.
+Ele executa verificações essenciais para procedimentos de ensaio, incluindo listagem de softwares, propriedades do sistema, configurações de rede e verificações específicas de segurança cibernética.
 
 ## Pré-requisitos
 
@@ -46,14 +46,14 @@ Ele executa verificações essenciais para procedimentos de ensaio (seção 5.2)
 $ ./tvbox_script.sh
 ==== VSW ====
 ==== TV-BOX ====
-Digite o protocolo da amostra: 12345
-Digite o orçamento da amostra: 7890
+Digite o protocolo da amostra: 0000
+Digite o orçamento da amostra: 0000
 [INFO]: Script finalizado. Relatórios em relatorio_tvbox.md e aplicativos_tvbox.md
 ```
 
 ### Tratamento de Erros
 
-- Se o ADB não detectar o dispositivo, verifique a conexão USB e habilite a depuração.
+- Se o ADB não detectar o dispositivo, verifique a conexão USB e habilite a depuração pelo modo de desenvolvedor da TV-BOX.
 - Em caso de falha em comandos ADB (ex.: dispositivo não rootado), o script registra "Erro" ou "NÃO detectado" e continua.
 - Para dispositivos com restrições (ex.: sem root), algumas verificações podem requerer análise manual.
 
